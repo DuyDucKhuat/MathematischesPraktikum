@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
+#include "matrix.h"
 
 // =======================
 //      Konstruktoren
@@ -42,6 +43,7 @@ Vektor::Vektor(const Vektor& x):Vek(x.Vek){ }
 
 double& Vektor::operator () (size_t i) {
 #ifndef NDEBUG
+    
     if (i >= Vek.size())
         VekFehler("Ungueltiger Index!");
 #endif
@@ -75,7 +77,7 @@ Vektor& Vektor::operator = (const Vektor& x)
 #endif
     
     for (size_t i = 0; i < Vek.size(); i++)
-        (*this) (i) = x(i);
+        (*this)(i) = x(i);
     
     //oder: this->Vek=x.Vek;
     
@@ -337,7 +339,7 @@ Vektor operator * (const Matrix& x, const Vektor& v)
     if (x.col() != v.Laenge())
         Vektor::VekFehler("Inkompatible Dimensionen fuer 'Matrix * Vektor'!");
 #endif
-    Vektor w(v.Laenge());
+    Vektor w(x.rows());
     for (int i = 0 ; i < x.rows();i++){
         double wi=0.0;
         for( int j= 0; j < x.col(); j++){
@@ -351,9 +353,11 @@ Vektor operator * (const Vektor& v, const Matrix& x)
 {
 #ifndef NDEBUG
     if (x.rows() != v.Laenge())
-        Vektor::VekFehler("Inkompatible Dimensionen fuer 'Matrix * Vektor'!");
+        Vektor::VekFehler("Inkompatible Dimensionen fuer 'Vektor * Matrix'!");
 #endif
-    Vektor w(v.Laenge());
+    size_t m = x.col();
+    Vektor w(m);
+  
     for (int i = 0 ; i < x.col();i++){
         double wi=0.0;
         for( int j= 0; j < x.rows(); j++){

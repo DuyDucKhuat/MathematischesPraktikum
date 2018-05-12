@@ -191,7 +191,7 @@ int main()
     for (i=0; i<Big1; i++)
       for (j=0; j<Big2; j++)
         A(i,j)=0.5*i+0.8-0.3*j;
-
+  
     B=A;
     for (i=0; i<Big1; i++)
       for (j=0; j<Big2; j++)
@@ -275,6 +275,7 @@ int main()
     for (i=0; i<Big2; i++)
       x(i)=0.5*i;
     cout << "\nMatrix * Vektor." << flush;
+
 
     y=A*x;
     for (i=0; i<Big1; i++)

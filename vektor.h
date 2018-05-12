@@ -14,12 +14,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "matrix.h"
+
 
 class Matrix;                              // fuer friend Matrix * Vektor etc.
 
 class Vektor
 {
+    
   private:
     std::vector<double> Vek;              // Daten
 

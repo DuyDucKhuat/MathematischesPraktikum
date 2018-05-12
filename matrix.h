@@ -6,12 +6,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "vektor.h"
+
 
 class Vektor;                   // fuer friend Matrix * Matrix etc.
 
 class Matrix
 {
+   
 private:
     size_t Zeil,Spalt;
     std::vector<std::vector<double> > Mat;              // Daten

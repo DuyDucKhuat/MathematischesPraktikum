@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
+#include "vektor.h"
 
 // =======================
 //      Konstruktoren
@@ -68,17 +69,21 @@ double Matrix::operator () (size_t i, size_t j) const {
 
 Matrix& Matrix::operator = (const Matrix& x)
 {
+ 
 #ifndef NDEBUG
+
     if (this->rows() != x.rows() || this->col() != x.col())
         MatFehler("Inkompatible Dimensionen fuer 'Matrix = Matrix'!");
 #endif
     
-   /* for (size_t i = 0; i < Mat.size(); i++){
+    for (size_t i = 0; i < Mat.size(); i++){
         for (size_t j = 0; j < (*this).Spalt ; j++){
-        (*this) (i,j) = x(i);
+        (*this)(i,j) = x(i,j);
         }
-    }*/
-    this ->Mat = x.Mat;
+    }
+
+    //this->Mat = x.Mat;
+
     
     return *this;
 }
@@ -88,6 +93,7 @@ Matrix& Matrix::operator += (const Matrix& x)
 {
 #ifndef NDEBUG
     if (this->rows() != x.rows() || this->col() != x.col())
+
         MatFehler("Inkompatible Dimensionen fuer 'Matrix += Matrix'!");
 #endif
     
@@ -117,9 +123,6 @@ Matrix& Matrix::operator -= (const Matrix& x)
             (*this) (i,j) -= x(i,j);
         }
     }
-    
-    
-    
     return *this;
 }
 
@@ -206,9 +209,12 @@ Matrix operator + (const Matrix& x, const Matrix& y)
     if (x.rows() != y.rows() || x.col() != y.col())
         Matrix::MatFehler("Inkompatible Dimensionen fuer 'Matrix + Matrix'!");
 #endif
-    
-    Matrix z = x;
-    return z += y;
+    Matrix z(x.rows(),x.col());
+
+    z = x;
+    z += y;
+
+    return z;
 }
 
 
@@ -222,7 +228,8 @@ Matrix operator - (const Matrix& x, const Matrix& y)
 #endif
     
     Matrix z = x;
-    return z -= y;
+    z -= y;
+    return z;
 }
 
 
@@ -244,9 +251,9 @@ Matrix operator * (const Matrix& x, const Matrix& y)
     if (x.col() != y.rows())
         Matrix::MatFehler("Inkompatible Dimensionen fuer 'Matrix * Matrix'!");
     for (int i = 0; i < x.rows(); i++){
-        for( int j = 0 ; j < x.col();j++){
+        for( int j = 0 ; j < y.col();j++){
             double a_ij=0.0;
-            for( int k= 0 ; k < y.rows(); k++){
+            for( int k= 0 ; k < x.col(); k++){
                 a_ij+= x(i,k)*y(k,j);
             }
             l(i,j) = a_ij;
@@ -326,7 +333,7 @@ bool operator != (const Matrix& x, const Matrix& y)
 std::ostream& operator << (std::ostream& s, const Matrix& x)
 {
     s << std::setiosflags(std::ios::right);
-    s << "# Dim:( " << x.rows() << ", " << x.col() <<"\n";
+    s << "# Dim: (" << x.rows() << ", " << x.col() <<")\n";
     for (size_t i = 0; i <x.rows(); i++){
         for(size_t j = 0; j < x.col();j++){
             s << x(i,j) << " ";
@@ -350,7 +357,7 @@ std::istream& operator >> (std::istream& s, Matrix& x)
 }
     
     
-Vektor operator * (const Matrix& x, const Vektor& v)
+/*Vektor operator * (const Matrix& x, const Vektor& v)
 {
 #ifndef NDEBUG
     if (x.col() != v.Laenge())
@@ -382,3 +389,4 @@ Vektor operator * (const Vektor& v, const Matrix& x)
     }
     return w;
 }
+*/
