@@ -48,21 +48,14 @@ Vektor Jacobi(const Matrix& A, const Vektor&b, int k,const Vektor& x0, double to
     // Der Algorithmus für k Iterationen.
     Vektor x(n);
     x = x0;
-    Vektor prevx(n);
-    prevx = x0;
+    Matrix D(n,n);
+    Matrix B(n,n);
+    B = A;
+    for( int l = 0; l < n ; l++){B(l,l)=0;D(l,l)=1/A(l,l);}
     int i = 0;
     while( i <k && residuum(b,x,A)/b.Norm2()>= tol){
-        for ( int j = 0; j < n; j++){
-            double xj=0;
-            double sum = 0;
-            for( int s=0; s < n ; s++){
-                if( j!=s) sum += A(j,s)*prevx(j);
-            }
-            xj = (b(j) -sum) / A(j,j);
-            x(j) = xj;
-        }
-        prevx = x;
-        i++;
+        x = D*(b-B*x); 
+	i++;
     }
     return x;
 }
@@ -143,11 +136,9 @@ int main(){
     int maxiter;
     Start(1,A,x0, b, tol, maxiter);
     Vektor x(A.col());
-    x = Jacobi(A,b,maxiter,x0,tol);
+    x = GaussSeidel(A,b,maxiter,x0,tol);
     
     Ergebnis(x, maxiter, 0);
-    std::cout << x << std::endl;
-    std::cout << residuum(b,x,A) /b.Norm2()<<std::endl;
     std::ofstream ofs("jacobi.txt", std::ofstream::out);;
     ofs << residuum(b,x,A)/b.Norm2()<< "\n";
     ofs.close();
