@@ -63,7 +63,7 @@ Vektor Jacobi(const Matrix& A, const Vektor&b, int k,const Vektor& x0, double to
 //      Gauß-Seidel-Verfahren
 // =============================
 
-Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,const Vektor& x0, double tol){
+Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,double tol, const Vektor& x0){
 #ifndef NDEBUG
     if (!isDiagZeroFree(A))
         Vektor::VekFehler("Nullen in der Diagonale, Verfahren funktioniert nicht!");
@@ -73,23 +73,22 @@ Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,const Vektor& x0, doub
     //Der Algorithmus für k Iterationen.
     Vektor x(n);
     x= x0;
-    Vektor prevx(n);
-    while(k > 0 && residuum(b,x,A)/b.Norm2()>= tol ){
+    int l = 0;
+    while(k >l && (b-A*x).Norm2()/b.Norm2() >= tol ){
         for ( int i = 0; i < n; i++){
-            double xi = 0;
             double sum1 =0;
             double sum2 =0;
             for (int j=0; j < i; j++){
                 sum1 += A(i,j)*x(j);
             }
-            for( int s=0; s<n; s++){
-                sum2 += A(i,s)*prevx(s);
+            for( int s=i+1; s<n; s++){
+                sum2 += A(i,s)*x(s);
             }
-            xi = (b(i)- sum1 -sum2)/A(i,i);
-            prevx=x;
-            k--;
+            x(i) = (b(i)- sum1 -sum2)/A(i,i);
+            l++;
         }
     }
+    
     return x;
 }
 
@@ -98,30 +97,30 @@ Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,const Vektor& x0, doub
 // =============================
 
 
-Vektor CGMethod(const Matrix&A, const Vektor&b, int k, double eps, const Vektor& x0){
+Vektor CGMethod(const Matrix&A, const Vektor&b, int k,const  Vektor& x0, double eps){
     if(!isDiagZeroFree(A)) //todo A is s.p.d.
         Vektor::VekFehler("Nullen in der Diagonale? Das ist keine s.p.d!");
     
     int n = A.col();
-    int i =0;
+    int i = 0;
     Vektor x(n);
     x = x0;
     Vektor r(n);
     Vektor p(n);
     Vektor q(n);
     double alpha;
-    r = b;
+    r = b- A*x;
     double y = dot(r,r);
     double y2 = y;
-    
-    while( r.Norm2()/b.Norm2()> eps && i < k){
-        p = r;
-        q = A* p;
+    p = r;
+    while(r.Norm2()/b.Norm2()> eps && i < k){
+        
+        q = A * p;
         alpha = y/dot(q,p);
         x = x + alpha*p;
         r = r - alpha*q;
         y = dot(r,r);
-        p = r + + (y/y2)*p;
+        p = r + (y/y2)*p;
         y2 = y;
         i++;
     }
@@ -136,9 +135,9 @@ int main(){
     int maxiter;
     Start(1,A,x0, b, tol, maxiter);
     Vektor x(A.col());
-    x = GaussSeidel(A,b,maxiter,x0,tol);
+    x = GaussSeidel(A,b,maxiter,tol,x0);
     
-    Ergebnis(x, maxiter, 0);
+    Ergebnis(x, maxiter, 1);
     std::ofstream ofs("jacobi.txt", std::ofstream::out);;
     ofs << residuum(b,x,A)/b.Norm2()<< "\n";
     ofs.close();
