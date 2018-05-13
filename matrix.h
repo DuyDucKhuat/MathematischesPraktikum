@@ -1,7 +1,7 @@
 
 
-#ifndef _Matrix_H                         // Matrix.h nicht doppelt benutzen
-#define _Matrix_H
+#ifndef _MATRIX_H                         // Matrix.h nicht doppelt benutzen
+#define _MATRIX_H
 
 #include <iostream>
 #include <vector>
@@ -55,8 +55,8 @@ public:
     friend std::istream& operator >> (std::istream&, Matrix&);       // Eingabe
     friend std::ostream& operator << (std::ostream&, const Matrix&); // Ausgabe
     
-    friend Vektor   operator *  (const Matrix&, const Vektor&); // Matrix-Matrix-
-    friend Vektor   operator *  (const Vektor&, const Matrix&); // Multiplikation
+    //friend Vektor   operator *  (const Matrix&, const Vektor&); // Matrix-Matrix-
+    //friend Vektor   operator *  (const Vektor&, const Matrix&); // Multiplikation
 };
 
 #endif

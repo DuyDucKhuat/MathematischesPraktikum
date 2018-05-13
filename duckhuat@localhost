@@ -1,15 +1,14 @@
 /***********************************************
- *  Name       : vektor.cpp                     *
- *  Verwendung : Vektorklasse                   *
- *  Autor      :                                *
- *  Datum      :                                *
- ***********************************************/
+*  Name       : vektor.cpp                     *
+*  Verwendung : Vektorklasse                   *
+*  Autor      :                                *
+*  Datum      :                                *
+***********************************************/
 
 #include "vektor.h"
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
-#include "matrix.h"
 
 // =======================
 //      Konstruktoren
@@ -21,11 +20,11 @@
 Vektor::Vektor(size_t l)
 {
 #ifndef NDEBUG
-    if (l <= 0)
-        VekFehler("Nur Vektoren mit positiver Laenge!");
+  if (l <= 0)
+    VekFehler("Nur Vektoren mit positiver Laenge!");
 #endif
-    
-    this->ReDim(l);
+
+  this->ReDim(l);
 }
 
 
@@ -43,12 +42,11 @@ Vektor::Vektor(const Vektor& x):Vek(x.Vek){ }
 
 double& Vektor::operator () (size_t i) {
 #ifndef NDEBUG
-    
-    if (i >= Vek.size())
-        VekFehler("Ungueltiger Index!");
+  if (i >= Vek.size())
+    VekFehler("Ungueltiger Index!");
 #endif
-    
-    return Vek[i];
+
+  return Vek[i];
 }
 
 
@@ -56,11 +54,11 @@ double& Vektor::operator () (size_t i) {
 
 double Vektor::operator () (size_t i) const {
 #ifndef NDEBUG
-    if (i >= Vek.size())
-        VekFehler("Ungueltiger Index!");
+  if (i >= Vek.size())
+    VekFehler("Ungueltiger Index!");
 #endif
-    
-    return Vek[i];
+
+  return Vek[i];
 }
 
 // =====================
@@ -72,16 +70,16 @@ double Vektor::operator () (size_t i) const {
 Vektor& Vektor::operator = (const Vektor& x)
 {
 #ifndef NDEBUG
-    if (Vek.size() != x.Laenge())
-        VekFehler("Inkompatible Dimensionen fuer 'Vektor = Vektor'!");
+  if (Vek.size() != x.Laenge())
+    VekFehler("Inkompatible Dimensionen fuer 'Vektor = Vektor'!");
 #endif
-    
-    for (size_t i = 0; i < Vek.size(); i++)
-        (*this)(i) = x(i);
-    
-    //oder: this->Vek=x.Vek;
-    
-    return *this;
+
+  for (size_t i = 0; i < Vek.size(); i++)
+    (*this) (i) = x(i);
+
+  //oder: this->Vek=x.Vek;
+
+  return *this;
 }
 
 
@@ -115,7 +113,7 @@ Vektor& Vektor::operator -= (const Vektor& x)
     for (size_t i = 0; i < Vek.size(); i++)
         (*this) (i) -= x(i);
     
-    
+
     
     return *this;
 }
@@ -125,12 +123,11 @@ Vektor& Vektor::operator -= (const Vektor& x)
 
 Vektor& Vektor::operator *= (const double c)
 {
-    
+
     for (size_t i = 0; i < Vek.size(); i++)
         (*this) (i) *= c;
     return *this;
 }
-
 
 
 // ----- Zuweisungsoperator mit Division "/=" ----
@@ -153,14 +150,14 @@ Vektor& Vektor::operator /= (const double c)
 Vektor& Vektor::ReDim (size_t l)
 {
 #ifndef NDEBUG
-    if (l <= 0)
-        VekFehler("Nur Vektoren mit positiver Laenge!");
+  if (l <= 0)
+    VekFehler("Nur Vektoren mit positiver Laenge!");
 #endif
-    
-    Vek.clear();
-    Vek.resize(l,0);
-    
-    return *this;
+
+  Vek.clear();
+  Vek.resize(l,0);
+
+  return *this;
 }
 
 
@@ -174,7 +171,7 @@ Vektor& Vektor::ReDim (size_t l)
 double Vektor::Norm2() const
 {
     double x = 0;
-    for (size_t i = 0; i < Vek.size(); i++){
+    for (int i = 0; i < Vek.size(); i++){
         x += (*this)(i)*((*this)(i));
     }
     return sqrt(x);
@@ -186,7 +183,7 @@ double Vektor::Norm2() const
 double Vektor::NormMax() const
 {
     double max = abs((*this)(0));
-    for (size_t i = 1 ; i < Vek.size(); i++){
+    for (int i = 1 ; i < Vek.size(); i++){
         if ( max < abs((*this)(i)))
             max = abs((*this)(i));
     }
@@ -204,12 +201,12 @@ double Vektor::NormMax() const
 Vektor operator + (const Vektor& x, const Vektor& y)
 {
 #ifndef NDEBUG
-    if (x.Laenge() != y.Laenge())
-        Vektor::VekFehler("Inkompatible Dimensionen fuer 'Vektor + Vektor'!");
+  if (x.Laenge() != y.Laenge())
+    Vektor::VekFehler("Inkompatible Dimensionen fuer 'Vektor + Vektor'!");
 #endif
     
-    Vektor z = x;
-    return z += y;
+  Vektor z = x;
+  return z += y;
 }
 
 
@@ -244,11 +241,13 @@ double dot (const Vektor& x, const Vektor& y)
     double l = 0;
     if (x.Laenge() != y.Laenge())
         Vektor::VekFehler("Inkompatible Dimensionen fuer 'Vektor + Vektor'!");
-    for (size_t i = 0; i < x.Laenge(); i++){
+    for (int i = 0; i < x.Laenge(); i++){
         l += x(i)*y(i);
     }
     return l;
 }
+
+
 // ----- Multiplikation Skalar*Vektor "*" -----
 
 Vektor operator * (const double c, const Vektor& x)
@@ -288,12 +287,12 @@ Vektor operator / (const Vektor& x, const double c)
 
 bool operator == (const Vektor& x, const Vektor& y)
 {
-    if (x.Laenge() !=y.Laenge()) return false;
-    
-    for (size_t i = 0, xsize = x.Laenge(); i < xsize; i++)
-        if (x(i)!=y(i)) return false;
-    
-    return true;
+  if (x.Laenge() !=y.Laenge()) return false;
+
+  for (size_t i = 0, xsize = x.Laenge(); i < xsize; i++)
+    if (x(i)!=y(i)) return false;
+
+  return true;
 }
 
 
@@ -314,12 +313,12 @@ bool operator != (const Vektor& x, const Vektor& y)
 
 std::ostream& operator << (std::ostream& s, const Vektor& x)
 {
-    s << std::setiosflags(std::ios::right);
+  s << std::setiosflags(std::ios::right);
     s << "# Laenge: " << x.Laenge() <<"\n";;
-    for (size_t i = 0, xsize = x.Laenge(); i < xsize; i++)
-        s << "\n" << x(i);
-    
-    return s << std::endl;
+  for (size_t i = 0, xsize = x.Laenge(); i < xsize; i++)
+    s << "\n" << x(i);
+
+  return s << std::endl;
 }
 
 
@@ -327,10 +326,10 @@ std::ostream& operator << (std::ostream& s, const Vektor& x)
 
 std::istream& operator >> (std::istream& s, Vektor& x)
 {
-    for (size_t i = 0, xsize = x.Laenge(); i < xsize; i++) {
-        s >> x(i);
-    }
-    return s;
+  for (size_t i = 0, xsize = x.Laenge(); i < xsize; i++) {
+	s >> x(i);
+  }
+  return s;
 }
 
 Vektor operator * (const Matrix& x, const Vektor& v)
@@ -339,10 +338,10 @@ Vektor operator * (const Matrix& x, const Vektor& v)
     if (x.col() != v.Laenge())
         Vektor::VekFehler("Inkompatible Dimensionen fuer 'Matrix * Vektor'!");
 #endif
-    Vektor w(x.rows());
-    for (size_t i = 0 ; i < x.rows();i++){
+    Vektor w(v.Laenge());
+    for (int i = 0 ; i < x.rows();i++){
         double wi=0.0;
-        for( size_t j= 0; j < x.col(); j++){
+        for( int j= 0; j < x.col(); j++){
             wi += x(i,j)*v(j);
         }
         w(i) = wi;
@@ -353,14 +352,12 @@ Vektor operator * (const Vektor& v, const Matrix& x)
 {
 #ifndef NDEBUG
     if (x.rows() != v.Laenge())
-        Vektor::VekFehler("Inkompatible Dimensionen fuer 'Vektor * Matrix'!");
+        Vektor::VekFehler("Inkompatible Dimensionen fuer 'Matrix * Vektor'!");
 #endif
-    size_t m = x.col();
-    Vektor w(m);
-  
-    for (size_t i = 0 ; i < x.col();i++){
+    Vektor w(v.Laenge());
+    for (int i = 0 ; i < x.col();i++){
         double wi=0.0;
-        for( size_t j= 0; j < x.rows(); j++){
+        for( int j= 0; j < x.rows(); j++){
             wi += x(j,i)*v(j);
         }
         w(i) = wi;
@@ -375,9 +372,9 @@ Vektor operator * (const Vektor& v, const Matrix& x)
 
 
 // ----- Ausgabe der Fehlermeldung "str" -----
+
 void Vektor::VekFehler (const std::string& str)
 {
-    std::cerr << "\nVektorfehler: " << str << '\n' << std::endl;
-    exit(1);
+  std::cerr << "\nVektorfehler: " << str << '\n' << std::endl;
+  exit(1);
 }
-

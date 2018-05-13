@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
-#include "vektor.h"
+//#include "vektor.h"
 
 // =======================
 //      Konstruktoren
@@ -210,7 +210,6 @@ Matrix operator + (const Matrix& x, const Matrix& y)
         Matrix::MatFehler("Inkompatible Dimensionen fuer 'Matrix + Matrix'!");
 #endif
     Matrix z(x.rows(),x.col());
-
     z = x;
     z += y;
 
@@ -227,7 +226,8 @@ Matrix operator - (const Matrix& x, const Matrix& y)
         Matrix::MatFehler("Inkompatible Dimensionen fuer 'Matrix - Matrix'!");
 #endif
     
-    Matrix z = x;
+    Matrix z(x.rows(),x.col());
+    z = x;
     z -= y;
     return z;
 }
@@ -237,7 +237,8 @@ Matrix operator - (const Matrix& x, const Matrix& y)
 
 Matrix operator - (const Matrix& x)
 {
-    Matrix z = x;
+    Matrix z(x.rows(),x.col());
+    z = x;
     z *= (-1);
     return z;
 }
@@ -250,10 +251,10 @@ Matrix operator * (const Matrix& x, const Matrix& y)
     Matrix l = Matrix( x.rows(), y.col());
     if (x.col() != y.rows())
         Matrix::MatFehler("Inkompatible Dimensionen fuer 'Matrix * Matrix'!");
-    for (int i = 0; i < x.rows(); i++){
-        for( int j = 0 ; j < y.col();j++){
+    for (size_t i = 0; i < x.rows(); i++){
+        for( size_t j = 0 ; j < y.col();j++){
             double a_ij=0.0;
-            for( int k= 0 ; k < x.col(); k++){
+            for( size_t k= 0 ; k < x.col(); k++){
                 a_ij+= x(i,k)*y(k,j);
             }
             l(i,j) = a_ij;
@@ -268,7 +269,8 @@ Matrix operator * (const Matrix& x, const Matrix& y)
 
 Matrix operator * (const double c, const Matrix& x)
 {
-    Matrix z = x;
+    Matrix z(x.rows(),x.col());
+    z = x;
     z *=c;
     return z;
 }
@@ -278,7 +280,8 @@ Matrix operator * (const double c, const Matrix& x)
 
 Matrix operator * (const Matrix& x, const double c)
 {
-    Matrix z = x;
+    Matrix z(x.rows(),x.col());
+    z = x;
     z *=c;
     return z;
 }
@@ -288,7 +291,8 @@ Matrix operator * (const Matrix& x, const double c)
 
 Matrix operator / (const Matrix& x, const double c)
 {
-    Matrix z = x;
+    Matrix z(x.rows(),x.col());
+    z = x;
     z /=c;
     return z;
 }
