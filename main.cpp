@@ -29,16 +29,16 @@ bool isDiagZeroFree( const Matrix&A)
     return true;
 }
 
-double residuum (const Vektor& b, const Vektor&x, const Matrix& A){
+double res (const Vektor& b, const Vektor&x, const Matrix& A){
     Vektor r(b.Laenge());
-    r= b - A*x;
-    return r.Norm2();
+    double rel= (b - A*x).Norm2()/b.Norm2();
+    return rel;
 }
 
 // ==========================
 //      Jacobi-Verfahren
 // ==========================
-Vektor Jacobi(const Matrix& A, const Vektor&b, int k,const Vektor& x0, double tol){
+Vektor Jacobi(const Matrix& A, const Vektor& b, int& k, double tol, const Vektor& x0){
     #ifndef NDEBUG
     if (!isDiagZeroFree(A))
         Vektor::VekFehler("Nullen in der Diagonale, Verfahren funktioniert nicht!");
@@ -53,17 +53,18 @@ Vektor Jacobi(const Matrix& A, const Vektor&b, int k,const Vektor& x0, double to
     B = A;
     for( int l = 0; l < n ; l++){B(l,l)=0;D(l,l)=1/A(l,l);}
     int i = 0;
-    while( i <k && residuum(b,x,A)/b.Norm2()>= tol){
+    while( i <k && res(b,x,A)>= tol){
         x = D*(b-B*x); 
 	i++;
     }
+    k = i;
     return x;
 }
 // =============================
 //      Gauß-Seidel-Verfahren
 // =============================
 
-Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,double tol, const Vektor& x0){
+Vektor GaussSeidel(const Matrix& A, const Vektor&b, int& k,double tol, const Vektor& x0){
 #ifndef NDEBUG
     if (!isDiagZeroFree(A))
         Vektor::VekFehler("Nullen in der Diagonale, Verfahren funktioniert nicht!");
@@ -74,21 +75,17 @@ Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,double tol, const Vekt
     Vektor x(n);
     x= x0;
     int l = 0;
-    while(k >l && (b-A*x).Norm2()/b.Norm2() >= tol ){
+    while(k >l && res(b,x,A) >= tol ){
         for ( int i = 0; i < n; i++){
             double sum1 =0;
             double sum2 =0;
-            for (int j=0; j < i; j++){
-                sum1 += A(i,j)*x(j);
-            }
-            for( int s=i+1; s<n; s++){
-                sum2 += A(i,s)*x(s);
-            }
+            for (int j=0; j < i; j++){sum1 += A(i,j)*x(j);}
+            for( int s=i+1; s<n; s++){sum2 += A(i,s)*x(s);}
             x(i) = (b(i)- sum1 -sum2)/A(i,i);
-            l++;
         }
+	l++;
     }
-    
+    k = l;
     return x;
 }
 
@@ -97,7 +94,7 @@ Vektor GaussSeidel(const Matrix& A, const Vektor&b, int k,double tol, const Vekt
 // =============================
 
 
-Vektor CGMethod(const Matrix&A, const Vektor&b, int k,const  Vektor& x0, double eps){
+Vektor CGMethod(const Matrix&A, const Vektor&b, int& k, double eps, const  Vektor& x0){
     if(!isDiagZeroFree(A)) //todo A is s.p.d.
         Vektor::VekFehler("Nullen in der Diagonale? Das ist keine s.p.d!");
     
@@ -113,7 +110,7 @@ Vektor CGMethod(const Matrix&A, const Vektor&b, int k,const  Vektor& x0, double 
     double y = dot(r,r);
     double y2 = y;
     p = r;
-    while(r.Norm2()/b.Norm2()> eps && i < k){
+    while(res(b,x,A) >= eps && i < k){
         
         q = A * p;
         alpha = y/dot(q,p);
@@ -124,6 +121,7 @@ Vektor CGMethod(const Matrix&A, const Vektor&b, int k,const  Vektor& x0, double 
         y2 = y;
         i++;
     }
+    k=i;	
     return x;
 }
 
@@ -133,13 +131,32 @@ int main(){
     Vektor b;
     double tol;
     int maxiter;
-    Start(1,A,x0, b, tol, maxiter);
-    Vektor x(A.col());
-    x = GaussSeidel(A,b,maxiter,tol,x0);
-    
-    Ergebnis(x, maxiter, 1);
-    std::ofstream ofs("jacobi.txt", std::ofstream::out);;
-    ofs << residuum(b,x,A)/b.Norm2()<< "\n";
+    std::ofstream ofs("GaussSeidel.txt", std::ofstream::out);
+    for (int i = 1; i < 3; i++){
+   	 Start(i,A,x0, b, tol, maxiter);
+         Vektor x(A.col());
+   	 x = GaussSeidel(A,b,maxiter,tol,x0);
+    	 Ergebnis(x, maxiter, 1);
+         ofs << res(b,x,A)<< "\n";
+     }
     ofs.close();
+    std::ofstream ofs1("jacobi.txt", std::ofstream::out);
+    for (int i = 1; i < 3; i++){
+    	Start(i,A,x0, b, tol, maxiter);
+    	Vektor x(A.col());
+    	x = Jacobi(A,b,maxiter,tol,x0);
+   	Ergebnis(x, maxiter, 0);
+	ofs1 << res(b,x,A)<< "\n";
+    }
+    ofs1.close();
+    std::ofstream ofs2("GCMethod.txt", std::ofstream::out);
+    for (int i = 1; i < 3; i++){    
+	Start(i,A,x0, b, tol, maxiter);
+        Vektor x(A.col());
+        x = CGMethod(A,b,maxiter,tol,x0);
+        Ergebnis(x, maxiter, 2);
+	ofs2 << res(b,x,A)<< "\n";
+    }
+    ofs2.close();
     return 0;
 }
