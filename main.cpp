@@ -14,6 +14,8 @@
 #include "unit.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <string>
 // =================================
 //      Hauptdiagonale-Überprüfer
 // =================================
@@ -125,38 +127,34 @@ Vektor CGMethod(const Matrix&A, const Vektor&b, int& k, double eps, const  Vekto
     return x;
 }
 
-int main(){
+int main(int argc, char *argv[]){
+    std::istringstream IStr(argv[1]);
+    int bsp;
+    IStr >>bsp;
+   
+    std::cout << bsp << std::endl;
     Matrix A;
     Vektor x0;
     Vektor b;
     double tol;
     int maxiter;
     std::ofstream ofs("GaussSeidel.txt", std::ofstream::out);
-    for (int i = 1; i < 3; i++){
-   	 Start(i,A,x0, b, tol, maxiter);
+   	 Start(bsp,A,x0, b, tol, maxiter);
          Vektor x(A.col());
    	 x = GaussSeidel(A,b,maxiter,tol,x0);
     	 Ergebnis(x, maxiter, 1);
          ofs << res(b,x,A)<< "\n";
-     }
     ofs.close();
     std::ofstream ofs1("jacobi.txt", std::ofstream::out);
-    for (int i = 1; i < 3; i++){
-    	Start(i,A,x0, b, tol, maxiter);
-    	Vektor x(A.col());
+    	Start(bsp,A,x0, b, tol, maxiter);
     	x = Jacobi(A,b,maxiter,tol,x0);
    	Ergebnis(x, maxiter, 0);
 	ofs1 << res(b,x,A)<< "\n";
-    }
-    ofs1.close();
     std::ofstream ofs2("GCMethod.txt", std::ofstream::out);
-    for (int i = 1; i < 3; i++){    
-	Start(i,A,x0, b, tol, maxiter);
-        Vektor x(A.col());
+	Start(bsp,A,x0, b, tol, maxiter);
         x = CGMethod(A,b,maxiter,tol,x0);
         Ergebnis(x, maxiter, 2);
 	ofs2 << res(b,x,A)<< "\n";
-    }
     ofs2.close();
     return 0;
 }
